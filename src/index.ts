@@ -17,8 +17,12 @@ if (!process.env.JWT_SECRET) {
   console.warn('⚠️  JWT_SECRET غير محدد - يجب تعيينه في متغيرات البيئة');
   process.env.JWT_SECRET = 'CHANGE_THIS_IN_PRODUCTION_' + Date.now();
 }
-if (!process.env.MONGODB_URI) {
-  console.error('❌ MONGODB_URI غير محدد - يجب تعيينه في متغيرات البيئة');
+// Check for required environment variables
+const hasDbCredentials = process.env.DB_USER && process.env.DB_PASS && process.env.DB_HOST;
+const hasMongoUri = process.env.MONGODB_URI;
+
+if (!hasDbCredentials && !hasMongoUri) {
+  console.error('❌ يجب تعيين متغيرات قاعدة البيانات - إما DB_USER, DB_PASS, DB_HOST أو MONGODB_URI');
   process.exit(1);
 }
 

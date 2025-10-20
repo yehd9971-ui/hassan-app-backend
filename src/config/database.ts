@@ -6,7 +6,16 @@ class Database {
 
   async connect(): Promise<void> {
     try {
-      const connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/hassan-app';
+      // Build connection string from separate environment variables
+      const user = process.env.DB_USER;
+      const pass = process.env.DB_PASS ? encodeURIComponent(process.env.DB_PASS) : '';
+      const host = process.env.DB_HOST;
+      const db = process.env.DB_NAME || 'hassan-app';
+      
+      // Fallback to MONGODB_URI if separate variables are not provided
+      const connectionString = (user && pass && host) 
+        ? `mongodb+srv://${user}:${pass}@${host}/${db}?retryWrites=true&w=majority&appName=Cluster0`
+        : process.env.MONGODB_URI || 'mongodb://localhost:27017/hassan-app';
       
       // Check if it's a local connection or Atlas connection
       const isLocalConnection = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
