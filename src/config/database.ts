@@ -8,14 +8,20 @@ class Database {
     try {
       // Build connection string from separate environment variables
       const user = process.env.DB_USER;
-      const pass = process.env.DB_PASS ? encodeURIComponent(process.env.DB_PASS) : '';
+      const pass = process.env.DB_PASS;
       const host = process.env.DB_HOST;
       const db = process.env.DB_NAME || 'hassan-app';
       
-      // Fallback to MONGODB_URI if separate variables are not provided
-      const connectionString = (user && pass && host) 
-        ? `mongodb+srv://${user}:${pass}@${host}/${db}?retryWrites=true&w=majority&appName=Cluster0`
-        : process.env.MONGODB_URI || 'mongodb://localhost:27017/hassan-app';
+      let connectionString: string;
+      
+      if (user && pass && host) {
+        // Check if password is already URL encoded (contains %)
+        const encodedPass = pass.includes('%') ? pass : encodeURIComponent(pass);
+        connectionString = `mongodb+srv://${user}:${encodedPass}@${host}/${db}?retryWrites=true&w=majority`;
+      } else {
+        // Fallback to MONGODB_URI if separate variables are not provided
+        connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/hassan-app';
+      }
       
       // Check if it's a local connection or Atlas connection
       const isLocalConnection = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
@@ -41,11 +47,11 @@ class Database {
       if (!isLocalConnection) {
         // Send a ping to confirm a successful connection (for Atlas)
         await this.client.db("admin").command({ ping: 1 });
-        console.log("✅ Pinged your deployment. You successfully connected to MongoDB Atlas!");
+        console.log("✅ MongoDB connected successfully!");
       } else {
         // For local connections, just ping the database
         await this.client.db("admin").command({ ping: 1 });
-        console.log("✅ تم الاتصال بقاعدة البيانات MongoDB المحلية بنجاح!");
+        console.log("✅ MongoDB connected successfully!");
       }
       
       // Get database name from connection string or use default
@@ -55,12 +61,10 @@ class Database {
       // Create collections if they don't exist
       await this.ensureCollectionsExist();
       
-      console.log('✅ تم الاتصال بقاعدة البيانات MongoDB بنجاح');
-      console.log(`📊 قاعدة البيانات: ${dbName}`);
-      console.log(`🔗 نوع الاتصال: ${isLocalConnection ? 'محلي (Local)' : 'سحابي (Atlas)'}`);
+      console.log(`📊 Database: ${dbName}`);
+      console.log(`🔗 Connection type: ${isLocalConnection ? 'Local' : 'Atlas'}`);
     } catch (error) {
-      console.error('❌ خطأ في الاتصال بقاعدة البيانات:', error);
-      console.log('💡 تأكد من تشغيل MongoDB محلياً على المنفذ 27017');
+      console.error('❌ MongoDB connection error:', error.message);
       throw error;
     }
   }

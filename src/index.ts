@@ -27,7 +27,7 @@ if (!hasDbCredentials && !hasMongoUri) {
 }
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(helmetConfig); // Security headers
@@ -151,12 +151,12 @@ const startServer = async () => {
     }
     
     // Start HTTP server
-    const port = parseInt(process.env.PORT || '3000', 10);
-    app.listen(port, '0.0.0.0', () => {
-      console.log(`🚀 الخادم يعمل على المنفذ ${port}`);
-      console.log(`🌍 الرابط: http://0.0.0.0:${port}`);
-      console.log(`📊 حالة الخادم: http://0.0.0.0:${port}/health`);
-      console.log('✅ السيرفر جاهز لاستقبال الطلبات');
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌍 URL: http://0.0.0.0:${PORT}`);
+      console.log(`📊 Health check: http://0.0.0.0:${PORT}/health`);
+      console.log('✅ Server ready to accept requests');
+      console.log("✅ Deployment ready and healthy");
     });
   } catch (error) {
     console.error('❌ فشل في بدء الخادم:', error);
