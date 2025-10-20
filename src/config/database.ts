@@ -16,7 +16,7 @@ class Database {
       
       if (user && pass && host) {
         // Check if password is already URL encoded (contains %)
-        const encodedPass = pass.includes('%') ? pass : encodeURIComponent(pass);
+        const encodedPass = /%[0-9A-F]{2}/i.test(pass) ? pass : encodeURIComponent(pass);
         connectionString = `mongodb+srv://${user}:${encodedPass}@${host}/${db}?retryWrites=true&w=majority`;
       } else {
         // Fallback to MONGODB_URI if separate variables are not provided
@@ -42,6 +42,7 @@ class Database {
       // Create a MongoClient with appropriate options
       this.client = new MongoClient(connectionString, clientOptions);
 
+      console.log("Connecting to MongoDB...");
       await this.client.connect();
       
       if (!isLocalConnection) {
@@ -64,7 +65,7 @@ class Database {
       console.log(`📊 Database: ${dbName}`);
       console.log(`🔗 Connection type: ${isLocalConnection ? 'Local' : 'Atlas'}`);
     } catch (error) {
-      console.error('❌ MongoDB connection error:', error.message);
+      console.error("MongoDB connection error:", (error as Error).message);
       throw error;
     }
   }

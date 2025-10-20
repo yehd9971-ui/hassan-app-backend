@@ -27,7 +27,7 @@ if (!hasDbCredentials && !hasMongoUri) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // Middleware
 app.use(helmetConfig); // Security headers
@@ -48,14 +48,7 @@ app.get('/', (req, res) => {
 });
 
 // Health check route - يجب أن يعمل حتى لو فشل الاتصال بقاعدة البيانات
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-    message: 'Server is running'
-  });
-});
+app.get('/health', (_req, res) => res.status(200).send('OK'));
 
 // Detailed health check route (للتحقق من قاعدة البيانات)
 app.get('/health/detailed', async (req, res) => {
@@ -152,7 +145,7 @@ const startServer = async () => {
     
     // Start HTTP server
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log('Server running on', PORT);
       console.log(`🌍 URL: http://0.0.0.0:${PORT}`);
       console.log(`📊 Health check: http://0.0.0.0:${PORT}/health`);
       console.log('✅ Server ready to accept requests');
