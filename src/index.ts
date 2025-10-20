@@ -47,8 +47,18 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check route
-app.get('/health', async (req, res) => {
+// Health check route - يجب أن يعمل حتى لو فشل الاتصال بقاعدة البيانات
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    message: 'Server is running'
+  });
+});
+
+// Detailed health check route (للتحقق من قاعدة البيانات)
+app.get('/health/detailed', async (req, res) => {
   try {
     const dbConnected = await database.isConnected();
     res.json({
@@ -125,17 +135,27 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // Start server
 const startServer = async () => {
   try {
-    // Connect to database
-    await database.connect();
+    // Connect to database (لا نوقف السيرفر إذا فشل الاتصال)
+    try {
+      await database.connect();
+    } catch (dbError) {
+      console.warn('⚠️ تحذير: فشل الاتصال بقاعدة البيانات:', dbError);
+      console.log('🔄 سيتم المحاولة مرة أخرى لاحقاً...');
+    }
     
-    // Initialize Redis for rate limiting
-    await initRateLimiterStore();
+    // Initialize Redis for rate limiting (اختياري)
+    try {
+      await initRateLimiterStore();
+    } catch (redisError) {
+      console.warn('⚠️ تحذير: فشل الاتصال بـ Redis:', redisError);
+    }
     
     // Start HTTP server
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 الخادم يعمل على المنفذ ${PORT}`);
-      console.log(`🌍 الرابط: http://localhost:${PORT}`);
-      console.log(`📊 حالة الخادم: http://localhost:${PORT}/health`);
+      console.log(`🌍 الرابط: http://0.0.0.0:${PORT}`);
+      console.log(`📊 حالة الخادم: http://0.0.0.0:${PORT}/health`);
+      console.log('✅ السيرفر جاهز لاستقبال الطلبات');
     });
   } catch (error) {
     console.error('❌ فشل في بدء الخادم:', error);
