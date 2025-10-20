@@ -1,0 +1,333 @@
+{
+  "info": {
+    "name": "Hassan App API Collection",
+    "description": "مجموعة شاملة من طلبات API لتطبيق Hassan",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Basic Routes",
+      "item": [
+        {
+          "name": "Home Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hassan App Routes",
+      "item": [
+        {
+          "name": "Hassan App Welcome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hassan-app",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app"]
+            }
+          }
+        },
+        {
+          "name": "Hassan App Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/info",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "info"]
+            }
+          }
+        },
+        {
+          "name": "Hassan App Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/health",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "health"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"info@brightc0de.com\",\n  \"password\": \"StrongP@ssw0rd!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/hassan-app/login",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "login"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/logout",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/verify-token",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "verify-token"]
+            }
+          }
+        },
+        {
+          "name": "Get Users (Coming Soon)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/users",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get Posts (Coming Soon)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/posts",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "posts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Poems Routes",
+      "item": [
+        {
+          "name": "Get All Poems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/poems",
+              "host": ["{{base_url}}"],
+              "path": ["poems"]
+            }
+          }
+        },
+        {
+          "name": "Get All Poems with Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/poems?page=1&limit=5&sortBy=createdAt&sortOrder=desc",
+              "host": ["{{base_url}}"],
+              "path": ["poems"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Poems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/poems/search?q=حب&page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["poems", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "حب"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Poem by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/poems/68f54a173306fa8e4b1d2144",
+              "host": ["{{base_url}}"],
+              "path": ["poems", "68f54a173306fa8e4b1d2144"]
+            }
+          }
+        },
+        {
+          "name": "Create Poem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"قصيدة تجريبية\",\n  \"text\": \"هذه قصيدة تجريبية لاختبار النظام\\n\\nفي عالم من الأمل والجمال\\nنحلم بغد أفضل\\nنكتب قصائدنا\\nونشاركها مع العالم\",\n  \"author\": \"Mahmoud Hassan\",\n  \"category\": \"تجريبي\",\n  \"tags\": [\"تجريب\", \"اختبار\", \"شعر\"],\n  \"isPublic\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/poems",
+              "host": ["{{base_url}}"],
+              "path": ["poems"]
+            }
+          }
+        },
+        {
+          "name": "Update Poem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"قصيدة محدثة\",\n  \"text\": \"هذه قصيدة محدثة\\n\\nفي عالم من الأمل والجمال\\nنحلم بغد أفضل\\nنكتب قصائدنا\\nونشاركها مع العالم\\n\\n- تم التحديث\",\n  \"author\": \"Mahmoud Hassan\",\n  \"category\": \"محدث\",\n  \"tags\": [\"محدث\", \"شعر\", \"تجريب\"],\n  \"isPublic\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/poems/68f54a173306fa8e4b1d2144",
+              "host": ["{{base_url}}"],
+              "path": ["poems", "68f54a173306fa8e4b1d2144"]
+            }
+          }
+        },
+        {
+          "name": "Delete Poem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/poems/68f54a173306fa8e4b1d2144",
+              "host": ["{{base_url}}"],
+              "path": ["poems", "68f54a173306fa8e4b1d2144"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-set token from login response",
+          "if (pm.response && pm.response.json() && pm.response.json().data && pm.response.json().data.token) {",
+          "    pm.environment.set('token', pm.response.json().data.token);",
+          "    console.log('Token saved to environment');",
+          "}"
+        ]
+      }
+    }
+  ]
+}
