@@ -27,7 +27,7 @@ if (!hasDbCredentials && !hasMongoUri) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 
 // Middleware
 app.use(helmetConfig); // Security headers
@@ -151,10 +151,11 @@ const startServer = async () => {
     }
     
     // Start HTTP server
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 الخادم يعمل على المنفذ ${PORT}`);
-      console.log(`🌍 الرابط: http://0.0.0.0:${PORT}`);
-      console.log(`📊 حالة الخادم: http://0.0.0.0:${PORT}/health`);
+    const port = parseInt(process.env.PORT || '3000', 10);
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`🚀 الخادم يعمل على المنفذ ${port}`);
+      console.log(`🌍 الرابط: http://0.0.0.0:${port}`);
+      console.log(`📊 حالة الخادم: http://0.0.0.0:${port}/health`);
       console.log('✅ السيرفر جاهز لاستقبال الطلبات');
     });
   } catch (error) {
