@@ -127,40 +127,28 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 const startServer = async () => {
+  // Start HTTP server first
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log('Server running on', PORT);
+    console.log(`🌍 URL: http://0.0.0.0:${PORT}`);
+    console.log(`📊 Health check: http://0.0.0.0:${PORT}/health`);
+    console.log('✅ Server ready to accept requests');
+    console.log("✅ Deployment ready and healthy");
+  });
+
+  // Connect to database (لا نوقف السيرفر إذا فشل الاتصال)
   try {
-    // Connect to database (لا نوقف السيرفر إذا فشل الاتصال)
-    try {
-      await database.connect();
-    } catch (dbError) {
-      console.warn('⚠️ تحذير: فشل الاتصال بقاعدة البيانات:', (dbError as Error).message);
-      console.log('🔄 سيتم المحاولة مرة أخرى لاحقاً...');
-    }
-    
-    // Initialize Redis for rate limiting (اختياري)
-    try {
-      await initRateLimiterStore();
-    } catch (redisError) {
-      console.warn('⚠️ تحذير: فشل الاتصال بـ Redis:', (redisError as Error).message);
-    }
-    
-    // Start HTTP server
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log('Server running on', PORT);
-      console.log(`🌍 URL: http://0.0.0.0:${PORT}`);
-      console.log(`📊 Health check: http://0.0.0.0:${PORT}/health`);
-      console.log('✅ Server ready to accept requests');
-      console.log("✅ Deployment ready and healthy");
-    });
-  } catch (error) {
-    console.error('❌ فشل في بدء الخادم:', (error as Error).message);
-    console.log('🔄 محاولة بدء السيرفر بدون قاعدة البيانات...');
-    
-    // محاولة بدء السيرفر حتى لو فشل كل شيء آخر
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log('Server running on', PORT);
-      console.log('⚠️ Running in limited mode (no database)');
-      console.log("✅ Deployment ready and healthy");
-    });
+    await database.connect();
+  } catch (dbError) {
+    console.warn('⚠️ تحذير: فشل الاتصال بقاعدة البيانات:', (dbError as Error).message);
+    console.log('🔄 سيتم المحاولة مرة أخرى لاحقاً...');
+  }
+  
+  // Initialize Redis for rate limiting (اختياري)
+  try {
+    await initRateLimiterStore();
+  } catch (redisError) {
+    console.warn('⚠️ تحذير: فشل الاتصال بـ Redis:', (redisError as Error).message);
   }
 };
 
