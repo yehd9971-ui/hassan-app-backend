@@ -14,16 +14,8 @@ dotenv.config();
 
 // Set default environment variables for testing
 if (!process.env.JWT_SECRET) {
-  console.warn('⚠️  JWT_SECRET غير محدد - يجب تعيينه في متغيرات البيئة');
+  console.warn("⚠️ JWT_SECRET is not set. Tokens will be less secure in this environment.");
   process.env.JWT_SECRET = 'CHANGE_THIS_IN_PRODUCTION_' + Date.now();
-}
-// Check for required environment variables
-const hasDbCredentials = process.env.DB_USER && process.env.DB_PASS && process.env.DB_HOST;
-const hasMongoUri = process.env.MONGODB_URI;
-
-if (!hasDbCredentials && !hasMongoUri) {
-  console.warn('⚠️ تحذير: متغيرات قاعدة البيانات غير محددة - سيتم استخدام قاعدة بيانات محلية');
-  console.warn('⚠️ للاستخدام في الإنتاج، حدد DB_USER, DB_PASS, DB_HOST أو MONGODB_URI');
 }
 
 const app = express();
@@ -136,13 +128,8 @@ const startServer = async () => {
     console.log("✅ Deployment ready and healthy");
   });
 
-  // Connect to database (لا نوقف السيرفر إذا فشل الاتصال)
-  try {
-    await database.connect();
-  } catch (dbError) {
-    console.warn('⚠️ تحذير: فشل الاتصال بقاعدة البيانات:', (dbError as Error).message);
-    console.log('🔄 سيتم المحاولة مرة أخرى لاحقاً...');
-  }
+  // Connect to database after server starts
+  await database.connect();
   
   // Initialize Redis for rate limiting (اختياري)
   try {

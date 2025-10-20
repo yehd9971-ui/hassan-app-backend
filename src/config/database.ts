@@ -5,26 +5,25 @@ class Database {
   private db: Db | null = null;
 
   async connect(): Promise<void> {
-    try {
-      // Build connection string from separate environment variables
-      const user = process.env.DB_USER;
-      const pass = process.env.DB_PASS;
-      const host = process.env.DB_HOST;
-      const db = process.env.DB_NAME || 'hassan-app';
-      
-      let connectionString: string;
-      
-      if (user && pass && host) {
-        // Check if password is already URL encoded (contains %)
-        const encodedPass = /%[0-9A-F]{2}/i.test(pass) ? pass : encodeURIComponent(pass);
-        connectionString = `mongodb+srv://${user}:${encodedPass}@${host}/${db}?retryWrites=true&w=majority`;
+    const isProd = process.env.NODE_ENV === 'production';
+    const uri = process.env.MONGODB_URI?.trim();
+
+    if (!uri) {
+      const msg = "MONGODB_URI not set";
+      if (isProd) {
+        console.error("❌", msg, "- refusing to start in production");
+        process.exit(1);
       } else {
-        // Fallback to MONGODB_URI if separate variables are not provided
-        connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/hassan-app';
+        console.warn("⚠️", msg, "- dev environment may use local DB if explicitly configured");
+        return; // في التطوير فقط
       }
+    }
+
+    try {
+      console.log("Connecting to MongoDB...");
       
       // Check if it's a local connection or Atlas connection
-      const isLocalConnection = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+      const isLocalConnection = uri.includes('localhost') || uri.includes('127.0.0.1');
       
       let clientOptions: any = {};
       
@@ -40,9 +39,8 @@ class Database {
       }
 
       // Create a MongoClient with appropriate options
-      this.client = new MongoClient(connectionString, clientOptions);
+      this.client = new MongoClient(uri, clientOptions);
 
-      console.log("Connecting to MongoDB...");
       await this.client.connect();
       
       if (!isLocalConnection) {
@@ -56,7 +54,7 @@ class Database {
       }
       
       // Get database name from connection string or use default
-      const dbName = this.extractDatabaseName(connectionString) || 'hassan-app';
+      const dbName = this.extractDatabaseName(uri) || 'hassan-app';
       this.db = this.client.db(dbName);
       
       // Create collections if they don't exist
@@ -65,8 +63,8 @@ class Database {
       console.log(`📊 Database: ${dbName}`);
       console.log(`🔗 Connection type: ${isLocalConnection ? 'Local' : 'Atlas'}`);
     } catch (error) {
-      console.error("MongoDB connection error:", (error as Error).message);
-      throw error;
+      console.error("❌ MongoDB connection error:", (error as Error).message);
+      // لا تُنهِ العملية هنا: اترك السيرفر يعمل و/health يظل ناجحاً
     }
   }
 
