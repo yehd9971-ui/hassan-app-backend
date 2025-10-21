@@ -111,8 +111,8 @@ router.post('/login',
         return;
       }
 
-      // التحقق من كلمة المرور (في الإنتاج، استخدم bcrypt.compare)
-      const bcrypt = require('bcrypt');
+      // التحقق من كلمة المرور (في الإنتاج، استخدم bcryptjs.compare)
+      const bcrypt = require('bcryptjs');
       const isValidPassword = await bcrypt.compare(password, user.password);
       
       if (!isValidPassword) {
