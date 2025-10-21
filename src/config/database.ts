@@ -6,7 +6,7 @@ class Database {
 
   async connect(): Promise<void> {
     const isProd = process.env.NODE_ENV === 'production';
-    const uri = process.env.MONGODB_URI?.trim();
+    const uri = process.env.MONGODB_URI?.trim() || 'mongodb+srv://drmohammedafifhassanapp:DrNjsuwnnaKKSdbbqjsndMSNndwuhNNDdshHJHWKdsAS%40!sds!sd-%40!f@cluster0.aspanut.mongodb.net/hassan-app?retryWrites=true&w=majority';
 
     if (!uri) {
       const msg = "MONGODB_URI not set";
