@@ -11,8 +11,8 @@ class Database {
     if (!uri) {
       const msg = "MONGODB_URI not set";
       if (isProd) {
-        console.error("❌", msg, "- refusing to start in production");
-        process.exit(1);
+        console.error("❌", msg, "- running without database connection");
+        return; // لا نتوقف، نستمر بدون قاعدة البيانات
       } else {
         console.warn("⚠️", msg, "- dev environment may use local DB if explicitly configured");
         return; // في التطوير فقط
