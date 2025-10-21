@@ -15,7 +15,7 @@ dotenv.config();
 // Set default environment variables for testing
 if (!process.env.JWT_SECRET) {
   console.warn("⚠️ JWT_SECRET is not set. Tokens will be less secure in this environment.");
-  process.env.JWT_SECRET = 'CHANGE_THIS_IN_PRODUCTION_' + Date.now();
+  process.env.JWT_SECRET = 'MySuperSecretKey2025HassanAppProduction123456789';
 }
 
 const app = express();
