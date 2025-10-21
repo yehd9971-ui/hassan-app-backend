@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import jwt, { JwtPayload, TokenExpiredError, JsonWebTokenError, NotBeforeError } from 'jsonwebtoken';
 import { AuthenticatedRequest, AuthErrorResponse } from '../types/auth';
+import { getJwtSecret } from '../config/jwt';
 
 export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   try {
@@ -28,7 +29,10 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
     }
 
     // التحقق من صحة التوكن
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ['HS256'] }) as JwtPayload;
+    const decoded = jwt.verify(token, getJwtSecret(), { 
+      algorithms: ['HS256'],
+      clockTolerance: 60 // 60 seconds tolerance for clock differences
+    }) as JwtPayload;
     
     // التحقق من أن التوكن يحتوي على البيانات المطلوبة
     if (typeof decoded !== 'object' || !('id' in decoded) || !('role' in decoded)) {

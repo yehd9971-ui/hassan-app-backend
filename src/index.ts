@@ -21,6 +21,12 @@ if (!process.env.JWT_SECRET) {
   console.log("✅ JWT_SECRET fallback applied successfully!");
 }
 
+// Import JWT config and show warning about hardcoded secret
+import { getJwtSecret } from './config/jwt';
+if (!process.env.JWT_SECRET) {
+  console.warn("⚠️ Using HARDCODED_JWT_SECRET (set JWT_SECRET in env for production).");
+}
+
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
