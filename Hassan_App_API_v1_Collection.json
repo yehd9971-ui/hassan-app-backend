@@ -1,0 +1,490 @@
+{
+  "info": {
+    "name": "Hassan App API v1",
+    "description": "Complete API collection for Hassan App v1 with authentication and poem management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://your-railway-app.railway.app",
+      "type": "string"
+    },
+    {
+      "key": "JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Basic Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detailed Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/health/detailed",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health", "detailed"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Hassan App",
+      "item": [
+        {
+          "name": "App Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/hassan-app",
+              "host": ["{{BASE_URL}}"],
+              "path": ["hassan-app"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "App Detailed Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/hassan-app/info",
+              "host": ["{{BASE_URL}}"],
+              "path": ["hassan-app", "info"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "App Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/hassan-app/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["hassan-app", "health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.data.token) {",
+                  "        pm.environment.set('JWT_TOKEN', response.data.token);",
+                  "        console.log('JWT Token saved successfully');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin@example.com\",\n  \"password\": \"your_password\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/hassan-app/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["hassan-app", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/hassan-app/logout",
+              "host": ["{{BASE_URL}}"],
+              "path": ["hassan-app", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/hassan-app/verify-token",
+              "host": ["{{BASE_URL}}"],
+              "path": ["hassan-app", "verify-token"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Poems API v1",
+      "item": [
+        {
+          "name": "Get All Poems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/poems?page=1&limit=10&sort=new&published=true",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "new"
+                },
+                {
+                  "key": "published",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Poems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/poems/search?q=حب&type=عمودي&published=true",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "poems", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "حب"
+                },
+                {
+                  "key": "type",
+                  "value": "عمودي"
+                },
+                {
+                  "key": "published",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Poem by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/poems/507f1f77bcf86cd799439011",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "poems", "507f1f77bcf86cd799439011"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Poem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"قصيدة الحب\",\n  \"text\": \"في قلبي حب لا ينتهي\\nوفي عيني شوق لا يهدأ\",\n  \"verses\": [\n    \"في قلبي حب لا ينتهي\",\n    \"وفي عيني شوق لا يهدأ\"\n  ],\n  \"poemType\": \"عمودي\",\n  \"meter\": \"بحر الكامل\",\n  \"rhyme\": \"أ\",\n  \"published\": true,\n  \"tags\": [\"حب\", \"شوق\", \"شعر\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/poems",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "poems"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Poem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"قصيدة الحب المحدثة\",\n  \"published\": false,\n  \"tags\": [\"حب\", \"شوق\", \"شعر\", \"تحديث\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/poems/507f1f77bcf86cd799439011",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "poems", "507f1f77bcf86cd799439011"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Poem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/poems/507f1f77bcf86cd799439011",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "poems", "507f1f77bcf86cd799439011"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Complete Flow Test",
+          "item": [
+            {
+              "name": "1. Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.success && response.data.token) {",
+                      "        pm.environment.set('JWT_TOKEN', response.data.token);",
+                      "        console.log('✅ Login successful, token saved');",
+                      "    }",
+                      "} else {",
+                      "    console.log('❌ Login failed');",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin@example.com\",\n  \"password\": \"your_password\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/hassan-app/login",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["hassan-app", "login"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2. Create Poem",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200 || pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    if (response.success && response.data._id) {",
+                      "        pm.environment.set('POEM_ID', response.data._id);",
+                      "        console.log('✅ Poem created successfully, ID saved');",
+                      "    }",
+                      "} else {",
+                      "    console.log('❌ Poem creation failed');",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{JWT_TOKEN}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"قصيدة الاختبار\",\n  \"text\": \"هذه قصيدة للاختبار\\nتم إنشاؤها عبر Postman\",\n  \"verses\": [\n    \"هذه قصيدة للاختبار\",\n    \"تم إنشاؤها عبر Postman\"\n  ],\n  \"poemType\": \"عمودي\",\n  \"published\": true,\n  \"tags\": [\"اختبار\", \"postman\"]\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/poems",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "poems"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "3. Get Created Poem",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/poems/{{POEM_ID}}",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "poems", "{{POEM_ID}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "4. Update Poem",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{JWT_TOKEN}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"قصيدة الاختبار المحدثة\",\n  \"published\": false\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/poems/{{POEM_ID}}",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "poems", "{{POEM_ID}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "5. Search Poems",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/poems/search?q=اختبار",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "poems", "search"],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "اختبار"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "6. Delete Poem",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{JWT_TOKEN}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/poems/{{POEM_ID}}",
+                  "host": ["{{BASE_URL}}"],
+                  "path": ["api", "v1", "poems", "{{POEM_ID}}"]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
