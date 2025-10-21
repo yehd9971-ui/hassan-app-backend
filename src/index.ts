@@ -12,20 +12,7 @@ import { initRateLimiterStore, closeRateLimiterStore } from './middleware/rateLi
 // Load environment variables
 dotenv.config();
 
-console.log("🚀 Hassan App Backend - Updated Version with JWT Fallback");
-
-// Set default environment variables for testing
-if (!process.env.JWT_SECRET) {
-  console.warn("⚠️ JWT_SECRET is not set. Tokens will be less secure in this environment.");
-  process.env.JWT_SECRET = 'MySuperSecretKey2025HassanAppProduction123456789';
-  console.log("✅ JWT_SECRET fallback applied successfully!");
-}
-
-// Import JWT config and show warning about hardcoded secret
-import { getJwtSecret } from './config/jwt';
-if (!process.env.JWT_SECRET) {
-  console.warn("⚠️ Using HARDCODED_JWT_SECRET (set JWT_SECRET in env for production).");
-}
+console.log("🚀 Hassan App Backend - Ready for Production");
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;

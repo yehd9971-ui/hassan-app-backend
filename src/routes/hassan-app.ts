@@ -125,12 +125,17 @@ router.post('/login',
       }
 
       // إنشاء JWT token
-      const { signJwtToken } = require('../config/jwt');
-      const token = signJwtToken({
-        id: user._id.toString(), 
-        role: user.role,
-        username: user.email 
-      });
+      const jwt = require('jsonwebtoken');
+      const { getJwtSecret, JWT_EXPIRES_IN } = require('../config/jwt');
+      const token = jwt.sign(
+        { 
+          id: user._id.toString(), 
+          role: user.role,
+          username: user.email 
+        },
+        getJwtSecret(),
+        { expiresIn: JWT_EXPIRES_IN }
+      );
       
       res.json({
         success: true,
@@ -186,8 +191,9 @@ router.get('/verify-token',
 
     try {
       const token = authHeader.substring(7);
-      const { verifyJwtToken } = require('../config/jwt');
-      const decoded = verifyJwtToken(token);
+      const jwt = require('jsonwebtoken');
+      const { getJwtSecret } = require('../config/jwt');
+      const decoded = jwt.verify(token, getJwtSecret(), { clockTolerance: 60 });
       
       res.json({
         success: true,
