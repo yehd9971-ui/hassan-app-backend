@@ -32,7 +32,7 @@ export const CreatePoemSchema = z.object({
   notes: z.string().optional(),
   // حقل مفتوح لأي بيانات إضافية
   customData: z.record(z.any()).optional()
-});
+}).passthrough(); // يسمح بأي حقول إضافية
 
 // مخطط تحديث قصيدة - بدون قيود
 export const UpdatePoemSchema = CreatePoemSchema.partial();
