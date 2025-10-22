@@ -1,34 +1,41 @@
 import { z } from 'zod';
 
-// مخطط إنشاء قصيدة
+// مخطط إنشاء قصيدة - بدون قيود
 export const CreatePoemSchema = z.object({
-  title: z.string()
-    .min(1, 'العنوان مطلوب')
-    .max(150, 'العنوان يجب أن يكون أقل من 150 حرف'),
-  text: z.string()
-    .min(1, 'نص القصيدة مطلوب')
-    .max(20000, 'نص القصيدة يجب أن يكون أقل من 20000 حرف'),
-  verses: z.array(z.string().min(1, 'البيت مطلوب'))
-    .min(1, 'يجب أن تحتوي القصيدة على بيت واحد على الأقل'),
-  poemType: z.enum(['عمودي', 'حر', 'نثر', 'شعبي'])
-    .default('عمودي'),
+  title: z.string().optional(),
+  text: z.string().optional(),
+  verses: z.array(z.string()).optional(),
+  poemType: z.string().optional(),
   meter: z.string().optional(),
   rhyme: z.string().optional(),
-  date: z.union([z.string().datetime('تاريخ غير صالح'), z.date()]).optional(),
-  lineCount: z.number().int().positive('عدد الأسطر يجب أن يكون رقم موجب').optional(),
-  published: z.boolean().default(false),
-  publishedAt: z.union([z.string().datetime('تاريخ النشر غير صالح'), z.date()]).optional(),
+  date: z.any().optional(),
+  lineCount: z.any().optional(),
+  published: z.any().optional(),
+  publishedAt: z.any().optional(),
   normalizedText: z.string().optional(),
-  tags: z.array(z.string().max(50, 'الوسم يجب أن يكون أقل من 50 حرف'))
-    .max(10, 'يمكن إضافة 10 وسوم كحد أقصى')
-    .optional()
+  tags: z.array(z.string()).optional(),
+  // إضافة حقول مفتوحة لأي بيانات إضافية
+  author: z.string().optional(),
+  language: z.string().optional(),
+  theme: z.string().optional(),
+  mood: z.string().optional(),
+  difficulty: z.string().optional(),
+  readingTime: z.any().optional(),
+  likes: z.any().optional(),
+  views: z.any().optional(),
+  comments: z.array(z.any()).optional(),
+  category: z.string().optional(),
+  era: z.string().optional(),
+  region: z.string().optional(),
+  isOriginal: z.any().optional(),
+  source: z.string().optional(),
+  notes: z.string().optional(),
+  // حقل مفتوح لأي بيانات إضافية
+  customData: z.record(z.any()).optional()
 });
 
-// مخطط تحديث قصيدة
-export const UpdatePoemSchema = CreatePoemSchema.partial().refine(
-  (data) => Object.keys(data).length > 0,
-  'يجب تحديث حقل واحد على الأقل'
-);
+// مخطط تحديث قصيدة - بدون قيود
+export const UpdatePoemSchema = CreatePoemSchema.partial();
 
 // مخطط قائمة القصائد
 export const GetPoemsSchema = z.object({

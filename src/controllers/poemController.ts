@@ -6,38 +6,17 @@ import { ObjectId } from 'mongodb';
 export class PoemController {
   private collection = 'poems';
 
-  // إنشاء قصيدة جديدة
+  // إنشاء قصيدة جديدة - بدون قيود
   async createPoem(req: Request, res: Response): Promise<void> {
     try {
-      const poemData: CreatePoemRequest = req.body;
+      const poemData: any = req.body; // قبول أي بيانات
       
-      // التحقق من البيانات المطلوبة
-      if (!poemData.title || !poemData.text || !poemData.verses) {
-        res.status(400).json({
-          success: false,
-          message: 'البيانات المطلوبة مفقودة',
-          error: 'title, text, and verses are required'
-        });
-        return;
-      }
-
       const db = database.getDatabase();
       const poemsCollection = db.collection(this.collection);
 
-      // إعداد البيانات
-      const newPoem: Omit<Poem, '_id'> = {
-        title: poemData.title,
-        text: poemData.text,
-        verses: poemData.verses,
-        poemType: poemData.poemType || 'عمودي',
-        meter: poemData.meter || '',
-        rhyme: poemData.rhyme || '',
-        date: new Date(poemData.date),
-        lineCount: poemData.lineCount || poemData.verses.length,
-        published: poemData.published || false,
-        publishedAt: poemData.publishedAt ? new Date(poemData.publishedAt) : undefined,
-        normalizedText: poemData.normalizedText || poemData.text.replace(/\s+/g, ' ').trim(),
-        tags: poemData.tags || [],
+      // إعداد البيانات - قبول جميع الحقول كما هي
+      const newPoem: any = {
+        ...poemData, // نسخ جميع البيانات المرسلة
         createdAt: new Date(),
         updatedAt: new Date()
       };

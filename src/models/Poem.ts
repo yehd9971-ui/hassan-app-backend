@@ -1,34 +1,73 @@
 export interface Poem {
   _id?: string;
-  title: string;
-  text: string;
-  verses: string[];
-  poemType: 'عمودي' | 'حر' | 'نثر' | 'شعبي';
-  meter: string;
-  rhyme: string;
-  date: Date;
-  lineCount: number;
-  published: boolean;
-  publishedAt?: Date;
-  normalizedText: string;
+  // الحقول الأساسية - اختيارية
+  title?: string;
+  text?: string;
+  verses?: string[];
+  poemType?: string;
+  meter?: string;
+  rhyme?: string;
+  date?: any;
+  lineCount?: any;
+  published?: any;
+  publishedAt?: any;
+  normalizedText?: string;
   tags?: string[];
+  // حقول إضافية مفتوحة
+  author?: string;
+  language?: string;
+  theme?: string;
+  mood?: string;
+  difficulty?: string;
+  readingTime?: any;
+  likes?: any;
+  views?: any;
+  comments?: any[];
+  category?: string;
+  era?: string;
+  region?: string;
+  isOriginal?: any;
+  source?: string;
+  notes?: string;
+  // حقل مفتوح لأي بيانات إضافية
+  customData?: Record<string, any>;
+  // حقول النظام
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface CreatePoemRequest {
-  title: string;
-  text: string;
-  verses: string[];
-  poemType: 'عمودي' | 'حر' | 'نثر' | 'شعبي';
-  meter: string;
-  rhyme: string;
-  date: string; // ISO string
-  lineCount: number;
-  published: boolean;
-  publishedAt?: string; // ISO string
-  normalizedText: string;
+  // جميع الحقول اختيارية - بدون قيود
+  title?: string;
+  text?: string;
+  verses?: string[];
+  poemType?: string;
+  meter?: string;
+  rhyme?: string;
+  date?: any;
+  lineCount?: any;
+  published?: any;
+  publishedAt?: any;
+  normalizedText?: string;
   tags?: string[];
+  // حقول إضافية مفتوحة
+  author?: string;
+  language?: string;
+  theme?: string;
+  mood?: string;
+  difficulty?: string;
+  readingTime?: any;
+  likes?: any;
+  views?: any;
+  comments?: any[];
+  category?: string;
+  era?: string;
+  region?: string;
+  isOriginal?: any;
+  source?: string;
+  notes?: string;
+  // حقل مفتوح لأي بيانات إضافية
+  customData?: Record<string, any>;
 }
 
 export interface UpdatePoemRequest extends Partial<CreatePoemRequest> {
