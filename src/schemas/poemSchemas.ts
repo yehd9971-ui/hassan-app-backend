@@ -45,13 +45,17 @@ export const GetPoemsSchema = z.object({
     .default('1'),
   limit: z.string().regex(/^\d+$/, 'حد الطلبات غير صالح')
     .transform(Number)
-    .refine((n) => n >= 1 && n <= 100, 'حد الطلبات يجب أن يكون بين 1 و 100')
-    .default('20'),
+    .refine((n) => n >= 1 && n <= 150, 'حد الطلبات يجب أن يكون بين 1 و 150')
+    .default('50'),
   q: z.string().optional(),
   tag: z.string().optional(),
   sort: z.enum(['new', 'old']).default('new'),
   type: z.string().optional(),
-  published: z.string().regex(/^(true|false)$/).optional()
+  published: z.string().regex(/^(true|false)$/).optional(),
+  // إضافة المعاملات الجديدة للفهرس المركب
+  meter: z.string().optional(),
+  poemType: z.string().optional(),
+  before: z.string().optional()
 });
 
 // مخطط البحث
