@@ -1,0 +1,396 @@
+{
+  "info": {
+    "name": "Hassan App API v1 - Optimized Queries",
+    "description": "مجموعة اختبارات API مع استعلامات محسّنة للفهرس المركب",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "hassan-app-v1-optimized"
+  },
+  "item": [
+    {
+      "name": "Poems API v1",
+      "item": [
+        {
+          "name": "1. Get All Published Poems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&limit=20&sort=new",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "limit", "value": "20" },
+                { "key": "sort", "value": "new" }
+              ]
+            },
+            "description": "جلب جميع القصائد المنشورة (يستخدم الفهرس)"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Poems by Meter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&meter=الطويل&limit=10&sort=new",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "meter", "value": "الطويل" },
+                { "key": "limit", "value": "10" },
+                { "key": "sort", "value": "new" }
+              ]
+            },
+            "description": "فلترة بالبحر (يستخدم الفهرس بكفاءة عالية)"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Poems by Meter + Type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&meter=الطويل&poemType=كاملة&limit=10&sort=new",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "meter", "value": "الطويل" },
+                { "key": "poemType", "value": "كاملة" },
+                { "key": "limit", "value": "10" },
+                { "key": "sort", "value": "new" }
+              ]
+            },
+            "description": "فلترة بالبحر والنوع (أقصى كفاءة للفهرس)"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Poems by Type Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&poemType=رباعية&limit=10&sort=new",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "poemType", "value": "رباعية" },
+                { "key": "limit", "value": "10" },
+                { "key": "sort", "value": "new" }
+              ]
+            },
+            "description": "فلترة بالنوع فقط (قد لا يستخدم الفهرس بكفاءة)"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Cursor-based Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&meter=الطويل&before=2025-10-24T07:30:00Z&limit=5&sort=new",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "meter", "value": "الطويل" },
+                { "key": "before", "value": "2025-10-24T07:30:00Z" },
+                { "key": "limit", "value": "5" },
+                { "key": "sort", "value": "new" }
+              ]
+            },
+            "description": "استخدام cursor للصفحات التالية (فعّال)"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Oldest Poems First",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&sort=old&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "sort", "value": "old" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "الأقدم أولاً (قد لا يستخدم الفهرس)"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Invalid Meter (Should Fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&meter=invalid&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "meter", "value": "invalid" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "اختبار التحقق من البحر (يجب أن يرجع 400)"
+          },
+          "response": []
+        },
+        {
+          "name": "8. Invalid PoemType (Should Fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&poemType=invalid&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "poemType", "value": "invalid" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "اختبار التحقق من النوع (يجب أن يرجع 400)"
+          },
+          "response": []
+        },
+        {
+          "name": "9. Invalid Sort (Should Fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&sort=random&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "sort", "value": "random" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "اختبار التحقق من الترتيب (يجب أن يرجع 400)"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Invalid Before Date (Should Fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems?published=true&before=not-a-date&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"],
+              "query": [
+                { "key": "published", "value": "true" },
+                { "key": "before", "value": "not-a-date" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "اختبار التحقق من التاريخ (يجب أن يرجع 400)"
+          },
+          "response": []
+        },
+        {
+          "name": "11. Get Specific Poem",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems/{{poem_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems", "{{poem_id}}"]
+            },
+            "description": "جلب قصيدة محددة بالـ ID"
+          },
+          "response": []
+        },
+        {
+          "name": "12. Create Poem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"قصيدة جديدة\",\n  \"meter\": \"الطويل\",\n  \"poemType\": \"كاملة\",\n  \"verses\": [\"البيت الأول\", \"البيت الثاني\"],\n  \"published\": true,\n  \"author\": \"الشاعر\",\n  \"customField\": \"أي قيمة\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems"]
+            },
+            "description": "إنشاء قصيدة جديدة (يتطلب مصادقة)"
+          },
+          "response": []
+        },
+        {
+          "name": "13. Update Poem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"عنوان محدث\",\n  \"meter\": \"الكامل\",\n  \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems/{{poem_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems", "{{poem_id}}"]
+            },
+            "description": "تحديث قصيدة (يتطلب مصادقة)"
+          },
+          "response": []
+        },
+        {
+          "name": "14. Delete Poem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/poems/{{poem_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "poems", "{{poem_id}}"]
+            },
+            "description": "حذف قصيدة (يتطلب مصادقة)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/hassan-app/login",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "login"]
+            },
+            "description": "تسجيل الدخول للحصول على JWT token"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/hassan-app/verify-token",
+              "host": ["{{base_url}}"],
+              "path": ["hassan-app", "verify-token"]
+            },
+            "description": "التحقق من صلاحية التوكن"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "Basic Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "فحص صحة الخادم"
+          },
+          "response": []
+        },
+        {
+          "name": "Detailed Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/detailed",
+              "host": ["{{base_url}}"],
+              "path": ["health", "detailed"]
+            },
+            "description": "فحص مفصل للخادم وقاعدة البيانات"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "poem_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
+

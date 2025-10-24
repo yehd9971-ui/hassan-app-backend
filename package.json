@@ -9,7 +9,9 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "sync:indexes": "node scripts/sync-indexes.js",
+    "clean:fields": "node scripts/clean-poem-fields.js"
   },
   "keywords": [
     "nodejs",

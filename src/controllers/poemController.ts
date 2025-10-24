@@ -42,66 +42,124 @@ export class PoemController {
     }
   }
 
-  // جلب جميع القصائد مع pagination
+  // قوائم القيم المسموح بها
+  private readonly METERS = [
+    'الطويل', 'المديد', 'البسيط', 'الوافر', 'الكامل', 'الهزج',
+    'الرجز', 'الرمل', 'السريع', 'المنسرح', 'الخفيف', 'المضارع',
+    'المقتضب', 'المجتث', 'المتقارب', 'المتدارك'
+  ] as const;
+
+  private readonly TYPES = [
+    'كاملة', 'رباعية', 'ثلاثية', 'ثنائية', 'يتيم'
+  ] as const;
+
+  // جلب جميع القصائد مع فلترة دقيقة تطابق الفهرس المركب
   async getAllPoems(req: Request, res: Response): Promise<void> {
     try {
-      const { page = 1, limit = 20, q, tag, sort = 'new', type, published } = req.query;
-      
+      // قراءة المعاملات
+      const publishedParam = String(req.query.published ?? 'true').toLowerCase();
+      const meterParam = req.query.meter ? String(req.query.meter).trim() : undefined;
+      const poemTypeParam = req.query.poemType ? String(req.query.poemType).trim() : undefined;
+      const sortParam = req.query.sort as string || 'new';
+      const beforeParam = req.query.before ? String(req.query.before) : undefined;
+      const limitParam = Math.min(Number(req.query.limit) || 50, 150);
+
+      // التحقق من صحة meter
+      if (meterParam && !this.METERS.includes(meterParam as any)) {
+        const response: PoemResponse = {
+          success: false,
+          message: `البحر "${meterParam}" غير صالح. القيم المسموح بها: ${this.METERS.join('، ')}`,
+          error: 'VALIDATION_ERROR'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      // التحقق من صحة poemType
+      if (poemTypeParam && !this.TYPES.includes(poemTypeParam as any)) {
+        const response: PoemResponse = {
+          success: false,
+          message: `نوع القصيدة "${poemTypeParam}" غير صالح. القيم المسموح بها: ${this.TYPES.join('، ')}`,
+          error: 'VALIDATION_ERROR'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      // التحقق من صحة sort
+      if (sortParam !== 'new' && sortParam !== 'old') {
+        const response: PoemResponse = {
+          success: false,
+          message: `قيمة الترتيب "${sortParam}" غير صالحة. القيم المسموح بها: new, old`,
+          error: 'VALIDATION_ERROR'
+        };
+        res.status(400).json(response);
+        return;
+      }
+
       const db = database.getDatabase();
       const poemsCollection = db.collection(this.collection);
-      
-      // بناء الفلتر
-      let filter: any = {};
-      
-      if (q) {
-        filter.$or = [
-          { title: { $regex: q, $options: 'i' } },
-          { text: { $regex: q, $options: 'i' } },
-          { normalizedText: { $regex: q, $options: 'i' } }
-        ];
+
+      // بناء الفلتر يطابق الفهرس المركب
+      const filter: any = { 
+        published: publishedParam === 'true' 
+      };
+
+      // إضافة meter فقط إن وُجد
+      if (meterParam) {
+        filter.meter = meterParam;
       }
-      
-      if (tag) {
-        filter.tags = { $in: [tag] };
+
+      // إضافة poemType فقط إن وُجد
+      if (poemTypeParam) {
+        filter.poemType = poemTypeParam;
       }
-      
-      if (type) {
-        filter.poemType = type;
+
+      // إضافة cursor-based pagination
+      if (beforeParam) {
+        try {
+          const beforeDate = new Date(beforeParam);
+          filter.createdAt = { 
+            [sortParam === 'new' ? '$lt' : '$gt']: beforeDate 
+          };
+        } catch (e) {
+          const response: PoemResponse = {
+            success: false,
+            message: 'تاريخ "before" غير صالح. استخدم ISO 8601 format',
+            error: 'VALIDATION_ERROR'
+          };
+          res.status(400).json(response);
+          return;
+        }
       }
-      
-      if (published !== undefined) {
-        filter.published = published === 'true';
-      }
-      
-      // ترتيب النتائج
-      const sortOrder = sort === 'old' ? 1 : -1;
-      const sortOptions = { createdAt: sortOrder as 1 | -1 };
-      
-      // حساب الصفحات
-      const skip = (Number(page) - 1) * Number(limit);
-      const totalCount = await poemsCollection.countDocuments(filter);
-      const totalPages = Math.ceil(totalCount / Number(limit));
-      
-      // جلب البيانات
-      const poems = await poemsCollection
-        .find(filter)
-        .sort(sortOptions)
-        .skip(skip)
-        .limit(Number(limit))
-        .toArray();
-      
+
+      // بناء ترتيب يطابق الفهرس
+      const sortDoc = { 
+        createdAt: sortParam === 'new' ? -1 : 1 
+      } as const;
+
+      // تنفيذ الاستعلام بكفاءة
+      const [items, matched] = await Promise.all([
+        poemsCollection
+          .find(filter)
+          .sort(sortDoc)
+          .limit(limitParam)
+          .toArray(),
+        poemsCollection.countDocuments(filter)
+      ]);
+
       const response: PoemResponse = {
         success: true,
-        message: `تم العثور على ${poems.length} قصيدة من أصل ${totalCount}`,
-        data: poems as unknown as Poem[],
-        count: poems.length,
+        message: `تم العثور على ${items.length} قصيدة من أصل ${matched}`,
+        data: items as unknown as Poem[],
+        count: items.length,
         pagination: {
-          page: Number(page),
-          limit: Number(limit),
-          totalCount,
-          totalPages,
-          hasNext: Number(page) < totalPages,
-          hasPrev: Number(page) > 1
+          page: 1,
+          limit: limitParam,
+          totalCount: matched,
+          totalPages: Math.ceil(matched / limitParam),
+          hasNext: items.length === limitParam && items.length < matched,
+          hasPrev: false
         }
       };
 
