@@ -64,3 +64,21 @@ export const SearchPoemsSchema = z.object({
   type: z.string().optional(),
   published: z.string().regex(/^(true|false)$/).optional()
 });
+
+// مخططات الإحصائيات
+export const StatsSchema = z.object({
+  meter: z.string().optional(),
+  poemType: z.string().optional(),
+  published: z.string().regex(/^(true|false)$/).optional(),
+  groupBy: z.enum(['meter', 'poemType']).optional()
+});
+
+export const MeterStatsSchema = z.object({
+  poemType: z.string().optional(),
+  published: z.string().regex(/^(true|false)$/).optional()
+});
+
+export const TypeStatsSchema = z.object({
+  meter: z.string().optional(),
+  published: z.string().regex(/^(true|false)$/).optional()
+});

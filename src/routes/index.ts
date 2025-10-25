@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import poemsV1 from './v1/poems';
+import statsV1 from './v1/stats';
 
 const api = Router();
 
@@ -11,5 +12,6 @@ api.use((req, res, next) => {
 
 // مسارات النسخة الأولى
 api.use('/v1/poems', poemsV1);
+api.use('/v1/stats', statsV1);
 
 export default api;

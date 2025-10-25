@@ -86,7 +86,7 @@ export interface PaginationInfo {
 export interface PoemResponse {
   success: boolean;
   message: string;
-  data?: Poem | Poem[];
+  data?: Poem | Poem[] | any; // السماح بأي نوع من البيانات للإحصائيات
   count?: number;
   pagination?: PaginationInfo;
   error?: string;
