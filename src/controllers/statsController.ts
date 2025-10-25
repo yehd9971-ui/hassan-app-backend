@@ -1,13 +1,30 @@
 import { Request, Response } from 'express';
 import database from '../config/database';
 import { PoemResponse } from '../models/Poem';
+import { CacheManager } from '../utils/cacheManager';
+import { ERROR_MESSAGES, ERROR_CODES, createErrorResponse, createSuccessResponse } from '../utils/errorMessages';
 
 export class StatsController {
   private collection = 'poems';
 
-  // إحصائيات شاملة
+  // إحصائيات شاملة مع كاش
   async getOverview(req: Request, res: Response): Promise<void> {
     try {
+      const cacheKey = 'stats:overview';
+      
+      // محاولة جلب من الكاش أولاً
+      const cached = await CacheManager.get(cacheKey);
+      if (cached) {
+        const response = createSuccessResponse(
+          'تم جلب الإحصائيات الشاملة من الكاش',
+          cached.data,
+          200,
+          { fromCache: true }
+        );
+        res.json(response);
+        return;
+      }
+
       const db = database.getDatabase();
       const poemsCollection = db.collection(this.collection);
 
@@ -40,26 +57,33 @@ export class StatsController {
         return acc;
       }, {} as Record<string, number>);
 
-      const response: PoemResponse = {
-        success: true,
-        message: 'تم جلب الإحصائيات الشاملة بنجاح',
-        data: {
-          totalPoems,
-          publishedPoems,
-          meters,
-          types,
-          lastUpdated: new Date().toISOString()
-        }
+      const data = {
+        totalPoems,
+        publishedPoems,
+        meters,
+        types,
+        lastUpdated: new Date().toISOString()
       };
+
+      // حفظ في الكاش
+      await CacheManager.setStats(cacheKey, data);
+
+      const response = createSuccessResponse(
+        'تم جلب الإحصائيات الشاملة بنجاح',
+        data,
+        200,
+        { fromCache: false }
+      );
 
       res.json(response);
     } catch (error) {
       console.error('خطأ في جلب الإحصائيات الشاملة:', error);
-      const response: PoemResponse = {
-        success: false,
-        message: 'خطأ في جلب الإحصائيات الشاملة',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      };
+      const response = createErrorResponse(
+        ERROR_MESSAGES.STATS_OVERVIEW_FAILED,
+        ERROR_CODES.STATS_OVERVIEW_FAILED,
+        500,
+        error instanceof Error ? error.message : 'Unknown error'
+      );
       res.status(500).json(response);
     }
   }

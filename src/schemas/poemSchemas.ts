@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// قوائم القيم المسموح بها
+const METERS = [
+  'الطويل', 'المديد', 'البسيط', 'الوافر', 'الكامل', 'الهزج',
+  'الرجز', 'الرمل', 'السريع', 'المنسرح', 'الخفيف', 'المضارع',
+  'المقتضب', 'المجتث', 'المتقارب', 'المتدارك'
+] as const;
+
+const TYPES = [
+  'كاملة', 'رباعية', 'ثلاثية', 'ثنائية', 'يتيم'
+] as const;
+
 // مخطط إنشاء قصيدة - بدون قيود
 export const CreatePoemSchema = z.object({
   title: z.string().optional(),
@@ -52,33 +63,44 @@ export const GetPoemsSchema = z.object({
   sort: z.enum(['new', 'old']).default('new'),
   type: z.string().optional(),
   published: z.string().regex(/^(true|false)$/).optional(),
-  // إضافة المعاملات الجديدة للفهرس المركب
-  meter: z.string().optional(),
-  poemType: z.string().optional(),
+  // إضافة المعاملات الجديدة للفهرس المركب مع validation
+  meter: z.enum(METERS).optional(),
+  poemType: z.enum(TYPES).optional(),
   before: z.string().optional()
 });
 
-// مخطط البحث
+// مخطط البحث مع pagination
 export const SearchPoemsSchema = z.object({
   q: z.string().min(1, 'كلمة البحث مطلوبة'),
-  type: z.string().optional(),
-  published: z.string().regex(/^(true|false)$/).optional()
+  type: z.enum(TYPES).optional(),
+  published: z.string().regex(/^(true|false)$/).optional(),
+  page: z.string().regex(/^\d+$/, 'رقم الصفحة غير صالح')
+    .transform(Number)
+    .refine((n) => n >= 1, 'رقم الصفحة يجب أن يكون 1 أو أكبر')
+    .default('1'),
+  limit: z.string().regex(/^\d+$/, 'حد الطلبات غير صالح')
+    .transform(Number)
+    .refine((n) => n >= 1 && n <= 100, 'حد الطلبات يجب أن يكون بين 1 و 100')
+    .default('20')
 });
 
 // مخططات الإحصائيات
 export const StatsSchema = z.object({
-  meter: z.string().optional(),
-  poemType: z.string().optional(),
+  meter: z.enum(METERS).optional(),
+  poemType: z.enum(TYPES).optional(),
   published: z.string().regex(/^(true|false)$/).optional(),
   groupBy: z.enum(['meter', 'poemType']).optional()
 });
 
 export const MeterStatsSchema = z.object({
-  poemType: z.string().optional(),
+  poemType: z.enum(TYPES).optional(),
   published: z.string().regex(/^(true|false)$/).optional()
 });
 
 export const TypeStatsSchema = z.object({
-  meter: z.string().optional(),
+  meter: z.enum(METERS).optional(),
   published: z.string().regex(/^(true|false)$/).optional()
 });
+
+// تصدير القوائم للاستخدام في Controllers
+export { METERS, TYPES };

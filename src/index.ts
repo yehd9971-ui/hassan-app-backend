@@ -5,9 +5,11 @@ import database from './config/database';
 import hassanAppRoutes from './routes/hassan-app';
 import poemRoutes from './routes/poems';
 import apiRoutes from './routes/index';
+import healthRoutes from './routes/health';
 import { helmetConfig, corsConfig } from './middleware/security';
 import { sanitizeMongo, sanitizeSelective } from './middleware/sanitize';
 import { initRateLimiterStore, closeRateLimiterStore } from './middleware/rateLimiter';
+import { initCacheManager, closeCacheManager } from './utils/cacheManager';
 
 // Load environment variables
 dotenv.config();
@@ -63,6 +65,9 @@ app.use('/hassan-app', hassanAppRoutes);
 
 // API Versioned routes
 app.use('/api', apiRoutes);
+
+// Health Check routes
+app.use('/health', healthRoutes);
 
 // Legacy poems routes (deprecated) - redirect to v1
 app.use('/poems', (req, res) => {
@@ -133,12 +138,20 @@ const startServer = async () => {
   } catch (redisError) {
     console.warn('⚠️ تحذير: فشل الاتصال بـ Redis:', (redisError as Error).message);
   }
+  
+  // Initialize Cache Manager (اختياري)
+  try {
+    await initCacheManager();
+  } catch (cacheError) {
+    console.warn('⚠️ تحذير: فشل الاتصال بـ Redis للكاش:', (cacheError as Error).message);
+  }
 };
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('\n🛑 تم استلام إشارة الإيقاف...');
   await closeRateLimiterStore();
+  await closeCacheManager();
   await database.disconnect();
   process.exit(0);
 });
@@ -146,6 +159,7 @@ process.on('SIGINT', async () => {
 process.on('SIGTERM', async () => {
   console.log('\n🛑 تم استلام إشارة الإيقاف...');
   await closeRateLimiterStore();
+  await closeCacheManager();
   await database.disconnect();
   process.exit(0);
 });
